@@ -19,7 +19,7 @@ suite("Functional Tests", function() {
   })
   suite("API ROUTING FOR /api/threads/:board", function() {
     suite("POST", function() {
-      test("Test POST /api/threads/:board with board params", function(done) {
+      test("Test POST with success", function(done) {
         chai
           .request(server)
           .post(`/api/threads/${board}`)
@@ -36,7 +36,7 @@ suite("Functional Tests", function() {
     })
 
     suite("GET", function() {
-      test("Test GET /api/threads/:board with board params", function(done) {
+      test("Test GET with success", function(done) {
         chai
           .request(server)
           .get(`/api/threads/${board}`)
@@ -52,14 +52,13 @@ suite("Functional Tests", function() {
     })
 
     suite("PUT", function() {
-      test("Test PUT /api/threads/:board with board params", function(done) {
+      test("Test PUT with success", function(done) {
         chai
           .request(server)
           .get(`/api/threads/${board}`)
           .query({ board })
           .end(function(err, res) {
             const { _id: report_id } = res.body[0]
-            console.log(report_id)
             chai
               .request(server)
               .put(`/api/threads/${board}`)
@@ -73,7 +72,7 @@ suite("Functional Tests", function() {
     })
 
     suite("DELETE", function() {
-      test("Test DELETE /api/threads/:board with board params", function(done) {
+      test("Test DELETE with success", function(done) {
         chai
           .request(server)
           .get(`/api/threads/${board}`)
@@ -94,12 +93,110 @@ suite("Functional Tests", function() {
   })
 
   suite("API ROUTING FOR /api/replies/:board", function() {
-    suite("POST", function() {})
+    suite("POST", function() {
+      test("Test POST with success", function(done) {
+        chai
+          .request(server)
+          .post(`/api/threads/${board}`)
+          .query({ board })
+          .send({ delete_password: "aze", text: "a sample text" })
+          .end(function(err, res) {
+            chai
+              .request(server)
+              .get(`/api/threads/${board}`)
+              .query({ board })
+              .end(function(err, res) {
+                const { _id: thread_id } = res.body[0]
+                chai
+                  .request(server)
+                  .post(`/api/replies/${board}`)
+                  .send({
+                    thread_id,
+                    delete_password,
+                    text: "This is a comment"
+                  })
+                  .end(function(err, res) {
+                    expect(res).to.redirect
+                    done()
+                  })
+              })
+          })
+      })
+    })
 
-    suite("GET", function() {})
+    suite("GET", function() {
+      test("Test GET with success", function(done) {
+        chai
+          .request(server)
+          .get(`/api/threads/${board}`)
+          .query({ board })
+          .end(function(err, res) {
+            const { _id: thread_id } = res.body[0]
+            chai
+              .request(server)
+              .get(`/api/replies/${board}`)
+              .query({ thread_id })
+              .end(function(err, res) {
+                assert.equal(res.body.replies.length, 1)
+                done()
+              })
+          })
+      })
+    })
 
-    suite("PUT", function() {})
+    suite("PUT", function() {
+      test("Test PUT with success", function(done) {
+        chai
+          .request(server)
+          .get(`/api/threads/${board}`)
+          .query({ board })
+          .end(function(err, res) {
+            const { _id: thread_id } = res.body[0]
+            chai
+              .request(server)
+              .get(`/api/replies/${board}`)
+              .query({ thread_id })
+              .end(function(err, res) {
+                const { _id: reply_id } = res.body.replies[0]
 
-    suite("DELETE", function() {})
+                chai
+                  .request(server)
+                  .put(`/api/replies/${board}`)
+                  .send({ thread_id, reply_id })
+                  .end(function(err, res) {
+                    assert.equal(res.body, "Success!")
+                    done()
+                  })
+              })
+          })
+      })
+    })
+
+    suite("DELETE", function() {
+      test("Test DELETE with success", function(done) {
+        chai
+          .request(server)
+          .get(`/api/threads/${board}`)
+          .query({ board })
+          .end(function(err, res) {
+            const { _id: thread_id } = res.body[0]
+            chai
+              .request(server)
+              .get(`/api/replies/${board}`)
+              .query({ thread_id })
+              .end(function(err, res) {
+                const { _id: reply_id } = res.body.replies[0]
+                chai
+                  .request(server)
+                  .delete(`/api/replies/${board}`)
+                  .send({ thread_id, reply_id, delete_password })
+                  .end(function(err, res) {
+                    assert.equal(res.body, "Success!")
+                    done()
+                  })
+              })
+          })
+      })
+    })
   })
 })

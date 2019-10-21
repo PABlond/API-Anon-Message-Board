@@ -56,7 +56,6 @@ module.exports = class BoardManager {
   async postComment({ delete_password, thread_id, text }) {
     const hash = this.hashPassword(delete_password)
     const data = await Board.findOne({ _id: thread_id })
-    console.log("data", data)
     if (data) {
       data.replies.push({
         text,
@@ -65,7 +64,6 @@ module.exports = class BoardManager {
         reported: false
       })
       data.replycount += 1
-      console.log(data.replies)
       await data.save()
     }
   }

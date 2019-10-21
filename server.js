@@ -8,8 +8,9 @@ const mongoose = require("mongoose")
 const apiRoutes = require("./routes/api.js")
 const fccTestingRoutes = require("./routes/fcctesting.js")
 const runner = require("./test-runner")
+const helmet = require("helmet")
 
-require('dotenv').config()
+require("dotenv").config()
 
 // MongoDB connection
 const { MONGO_PASSWORD, MONGO_USER } = process.env
@@ -19,6 +20,34 @@ mongoose.connect(
 )
 
 const app = express()
+
+app.use(
+  helmet({
+    frameguard: {
+      action: "deny"
+    },
+    noCache: true,
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'", "https://api.glitch.com"],
+        styleSrc: ["'self'", "https://button.glitch.me"],
+        scriptSrc: [
+          "'self'",
+          "https://code.jquery.com",
+          "https://button.glitch.me",
+          "https://api.glitch.com"
+        ],
+        imgSrc: [
+          "'self'",
+          "https://hyperdev.com",
+          "https://glitch.com",
+          "https://cdn.glitch.com",
+          "https://s3.amazonaws.com"
+        ]
+      }
+    }
+  })
+)
 
 app.use("/public", express.static(process.cwd() + "/public"))
 
