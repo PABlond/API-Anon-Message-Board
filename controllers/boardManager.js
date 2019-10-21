@@ -41,7 +41,6 @@ module.exports = class BoardManager {
     const doc = await Board.findByIdAndUpdate(report_id, {
       $set: { reported: true }
     })
-    console.log(doc)
     return doc ? "Success!" : "Failure"
   }
 

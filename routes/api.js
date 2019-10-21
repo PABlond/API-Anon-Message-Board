@@ -7,7 +7,7 @@ module.exports = function(app) {
     .route("/api/threads/:board")
 
     .get(async (req, res) => {
-      // an GET an array of the most recent 10 bumped threads on the board
+      // I can GET an array of the most recent 10 bumped threads on the board
       // with only the most recent 3 replies from /api/threads/{board}.
       // The reported and delete_passwords fields will not be sent.
       const { board } = req.params
@@ -43,7 +43,7 @@ module.exports = function(app) {
     .route("/api/replies/:board")
 
     .get(async (req, res) => {
-      // can GET an entire thread with all it's replies from /api/replies/{board}?thread_id={thread_id}.
+      // I can GET an entire thread with all it's replies from /api/replies/{board}?thread_id={thread_id}.
       // Also hiding the same fields.
       const { thread_id } = req.query
       return res
