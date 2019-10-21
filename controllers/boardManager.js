@@ -71,15 +71,15 @@ module.exports = class BoardManager {
     }
   }
 
-  async reportReply ({thread_id, reply_id}) {
-      const thread = await Board.findOne({_id: thread_id})
-      if (!thread) return 'Failure'
-      thread.replies = thread.replies(reply => {
-          if (reply_id === reply._id) reply.reported = true          
-          return reply
-      })
-      await thread.save()
-      return 'Success!'
+  async reportReply({ thread_id, reply_id }) {
+    const thread = await Board.findOne({ _id: thread_id })
+    if (!thread) return "Failure"
+    thread.replies = thread.replies.map(reply => {
+      if (reply_id === reply._id.toString()) reply.reported = true
+      return reply
+    })
+    await thread.save()
+    return "Success!"
   }
 
   async deleteReply({ thread_id, delete_password, reply_id }) {
